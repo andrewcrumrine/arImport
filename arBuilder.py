@@ -43,7 +43,33 @@ class OpenAccount(object):
 		self.customer = customer
 		self.invoice = None
 		self.items = []
-		self.prices = {}
+		self.transactions = []
 		self.amtDue = 0
 		self.amtPaid = 0
 		self.date = None
+
+class AcctTrans(object):
+	"""
+	This class is an account transaction.
+	"""
+	def __init__(self,reference,transType):
+		"""
+	This initializes the account transaction.  It needs the incoming invoice
+	number and transaction type to be created.
+		"""
+		self.date = ''
+		self.reference = reference
+		self.transType = transType
+		self.amount = amount
+
+	def setAmount(self,amount):
+		"""
+	Sets amount variable.  Sets variable to a real number
+		"""
+		self.amount = amount
+
+	def setDate(self,date):
+		"""
+	Sets date variable
+		"""
+		self.date = date

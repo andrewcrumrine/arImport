@@ -10,9 +10,13 @@
 
 import fileReader as f
 
-HEAD_KEY = 'AMR803 '
+#	Diagnostics, True is on, False is off
+DIAG = False
+
+#	Search keys
+HEAD_KEY = 'AMR803\n'
 CUST_KEY = '8'
-DASH_KEY = '-------'
+DASH_KEY = '-------\n'
 
 
 class ARReader(f.TxtFileReader):
@@ -27,7 +31,7 @@ class ARReader(f.TxtFileReader):
 		f.TxtFileReader.__init__(self,filenameIn)
 		self.eventState = 0
 		self.lock = False
-		self.key = {'\n':True, CUST_KEY:True,DASH_KEY:True}
+		self.key = {CUST_KEY:True,DASH_KEY:False}
 
 	def __del__(self):
 		"""
@@ -40,34 +44,87 @@ class ARReader(f.TxtFileReader):
 	This method creates a ARBuffer object. It tells the program when the
 	file is empty.
 		"""
+		key = self._getKeyDict()
+		#	Set the buffer
 		self.buffer = ARBuffer(self.fid,key)
 		self._setReading()
-		if self._isReturnLine():
+
+		if self._isReturnLine() and not self.lock:
+			if self.eventState > 1:
+				self.eventState -= 1
+			self._printDiagnostics(DIAG,True)
 			return self.buffer
 		elif self._isHeader():
 			self.eventState = 0
 			self.lock = True
+			self._printDiagnostics(DIAG,False)
+			return None
+		elif self._isBlank():
+			self._printDiagnostics(DIAG,False)
 			return None
 		elif self._unlock():
 			self.lock = False
 			self.eventState += 1
+			self._printDiagnostics(DIAG,True)
 			return self.buffer
 		else:
-			self.eventState -= 1
-			return None
+			pass
 
-	def _setKey(self):
+	def _getKeyDict(self):
 		"""
 	Checks the event state and passes a key to the buffer
 		"""
-		if eventState == 0:
+		if self.eventState == 0:
 			key = CUST_KEY
-		elif eventState == 1:
+		elif self.eventState == 1:
 			key = DASH_KEY
+		pos = self.key[key]
+		keyDict = {key:pos}
+		return keyDict
 	
 	def _unlock(self):
 		"""
-	Reads the """
+	Reads the return line state and determines if the header should be unlocked.
+		"""
+		if not self._isReturnLine() and self.lock:
+			self.lock = False
+			return True
+		return False
+
+	def _isHeader(self):
+		"""
+	Reads the buffer's header variable and returns boolean
+		"""
+		if self.buffer.header:
+			return True
+		return False
+
+	def _isBlank(self):
+		"""
+	Reads the buffer's blank variable and returns boolean
+		"""
+		if self.buffer.blank:
+			return True
+		return False
+
+	def _printDiagnostics(self,onBool,*typeBool):
+		"""
+	Easily print diagnostic info
+		"""
+		if onBool:
+			if typeBool[0]:
+				print(self.buffer)
+				print("Text: " + self.buffer.getText(1))
+			else:
+				print("None")
+
+			print("State: " + str(self.eventState))
+			print("Lock: " + str(self.lock))
+			print("")
+		else:
+			if typeBool[0]:
+				print(self.buffer.getText(1))
+
 
 class ARBuffer(f.TxtBuffer):
 	"""
@@ -78,9 +135,11 @@ class ARBuffer(f.TxtBuffer):
 	Inputs: open file, ordered key, and header key that appears randomly
 		"""
 		f.TxtBuffer.__init__(self,fid)
-		self.key = keyIn
+		self.keyDict = keyIn
 		self.headKey = {HEAD_KEY : False}
+		self.blankKey = {'\n':True}
 		self.header = False
+		self.blank = False
 		self.returnLine = self._checkNecessaryReturnLine()
 
 	def _checkNecessaryReturnLine(self):
@@ -91,18 +150,17 @@ class ARBuffer(f.TxtBuffer):
 		if self._isHeader():
 			self.header = True
 			return False
-		key,pos = self.key.items()[0]
-		if key == '\n':
+		if self._isBlank():
+			self.blank = True
 			return False
-		elif key == CUST_KEY:
-			self._setKey(key)
-			self._setPosition(pos)
-			if not self._checkReturnLine():
+
+		key,_ = self.keyDict.items()[0]
+		if key == CUST_KEY:
+			if self._isFlagged(self.keyDict):
+				self.header = False
 				return False
 		elif key == DASH_KEY:
-			self._setKey(key)
-			self._setPosition(pos)
-			if not self._checkReturnLine():
+			if self._isFlagged(self.keyDict):
 				return False
 		return True
 
@@ -110,7 +168,25 @@ class ARBuffer(f.TxtBuffer):
 		"""
 	Checks the header key for a header line
 		"""
-		key,pos = self.headKey.items()[0]
+		if self._isFlagged(self.headKey):
+			return True
+		return False
+
+	def _isBlank(self):
+		"""
+	Checks the text for an immediate new line
+		"""
+		if self._isFlagged(self.blankKey):
+			return True
+		return False
+
+	def _isFlagged(self,keyIn,wc=None):
+		"""
+	General function used to manage return line
+		"""
+		key,pos = keyIn.items()[0]
 		self._setKey(key)
 		self._setPosition(pos)
-		return self._checkReturnLine()
+		if self._checkReturnLine(wc):
+			return False
+		return True

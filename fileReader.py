@@ -96,11 +96,11 @@ class TxtBuffer(object):
 		else:
 			self.returnLine = self._checkReturnLine()
 
-	def _checkReturnLine(self):
+	def _checkReturnLine(self,wc=None):
 		"""
 	This method screens the string output for undesirable strings
 		"""
-		if self._isSpecialLine(self.key,self.pos):
+		if self._isSpecialLine(self.key,self.pos,wc):
 			return False
 		return True
 
