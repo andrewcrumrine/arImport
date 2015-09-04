@@ -10,6 +10,11 @@
 """
 
 import csvCreator as csv
+import stringMan as s
+
+PAYMENT = "PMT"
+INVOICE = "INV"
+CREDIT = "CRM"
 
 class ARCreator(csv.CSVCreator):
 	"""
@@ -32,7 +37,7 @@ class ARCreator(csv.CSVCreator):
 class OpenAccount(object):
 	"""
 	This class manages the open account information.  It includes
-	invoice number, customer, item list along with associated prices,
+	invoice numbers, customer, item list along with associated prices,
 	the amount paid and the amount due.
 	"""
 	def __init__(self,customer):
@@ -41,16 +46,56 @@ class OpenAccount(object):
 	inputed to initialize.
 		"""
 		self.customer = customer
-		self.invoice = None
+		self.invoices = []
+		self.building = True
+
+	def _setInvoice(self,invoice):
+		"""
+	Sets invoice variable
+		"""
+		self.invoice = invoice
+
+class Invoice(object):
+	"""
+	This class is an invoice.
+	"""
+	def __init__(self,invoice):
+		"""
+	This initializes the invoice.
+		"""		
+		self.invoice = s.removeSpaces(invoice)
 		self.items = []
 		self.transactions = []
-		self.amtDue = 0
-		self.amtPaid = 0
-		self.date = None
+		self.balence = 0
+		self.date = ''
+		self.lateCode = 0
 
-class AcctTrans(object):
+	def _setDate(self,date):
+		"""
+	Sets date variable
+		"""
+		self.date = s.removeSpaces(date)
+
+	def _setLateCode(self,code):
+		"""
+	Sets late code variable.  This variable is used to determine how far back
+	a search is required.
+		"""
+		self.lateCode = s.removeSpaces(code)
+
+	def _addTransaction(self,transType,date,amount):
+		"""
+	Adds a transaction to the transaction list
+		"""
+		newTrans = InvoiceTrans(self.invoice,transType)
+		newTrans.setDate(date)
+		newTrans.setAmount(amount)
+		self.transactions.append(newTrans)
+		self._correctBalence(newTrans)
+
+class InvoiceTrans(object):
 	"""
-	This class is an account transaction.
+	This class is a transaction against an open invoice.
 	"""
 	def __init__(self,reference,transType):
 		"""
@@ -58,18 +103,24 @@ class AcctTrans(object):
 	number and transaction type to be created.
 		"""
 		self.date = ''
-		self.reference = reference
-		self.transType = transType
-		self.amount = amount
+		self.invoice = reference
+		self.transType = s.removeSpaces(transType)
+		self.amount = 0
 
 	def setAmount(self,amount):
 		"""
 	Sets amount variable.  Sets variable to a real number
 		"""
-		self.amount = amount
+		amount = s.removeSpaces(amount)
+		amount = s.removeMinus(amount)
+		if self.transType == PAYMENT or self.transType == CREDIT:
+			self.amount = -float(amount)
+		else:
+			self.amount = float(amount)
 
 	def setDate(self,date):
 		"""
 	Sets date variable
 		"""
+		date = s.removeSpaces(date)
 		self.date = date
