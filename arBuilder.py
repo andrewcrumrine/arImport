@@ -46,3 +46,4 @@ class OpenAccount(object):
 		self.prices = {}
 		self.amtDue = 0
 		self.amtPaid = 0
+		self.date = None
