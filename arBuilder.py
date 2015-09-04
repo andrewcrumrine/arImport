@@ -26,6 +26,11 @@ class ARCreator(csv.CSVCreator):
 	Initializes arCreator class.
 		"""
 		csv.CSVCreator.__init__(self)
+		self.account = None
+		self.headers = ['Customer','Invoice','Invoice Date','Transaction Date'\
+		,'Amount','Open Balance']
+		self.indices = {'Customer':[0,8],'Invoice':[0,8], 'Code':[8,12],\
+		'IDate':[12,21],'Type':[8,12],'TDate',[21,31]}
 
 	def __del__(self):
 		"""
@@ -33,6 +38,13 @@ class ARCreator(csv.CSVCreator):
 		"""
 		if self.fid is not None:
 			self.fid.close()
+
+	def writeToCSV(self,textIn):
+		"""
+	Accepts incoming string and manages writing to csv
+		"""
+		if self.account is None:
+			pass
 
 class OpenAccount(object):
 	"""
@@ -66,7 +78,7 @@ class Invoice(object):
 		self.invoice = s.removeSpaces(invoice)
 		self.items = []
 		self.transactions = []
-		self.balence = 0
+		self.balance = 0
 		self.date = ''
 		self.lateCode = 0
 
@@ -91,7 +103,13 @@ class Invoice(object):
 		newTrans.setDate(date)
 		newTrans.setAmount(amount)
 		self.transactions.append(newTrans)
-		self._correctBalence(newTrans)
+		self._correctBalance(newTrans)
+
+	def _correctBalence(self,tranIn):
+		"""
+	Adds the transaction amount to the bottom line
+		"""
+		self.balance += tranIn.amount
 
 class InvoiceTrans(object):
 	"""
