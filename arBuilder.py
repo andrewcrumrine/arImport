@@ -46,25 +46,73 @@ class ARCreator(csv.CSVCreator):
 		"""
 	Accepts incoming string and manages writing to csv
 		"""
+		print("--NEW LINE---")
 		self._setText(textIn)
 		if self.account is not None:
-			if not self.account.building:
-				self.printEntry()
+			if self._buildStatus() == -1:
+				print("Print entry")
+				#self.printEntry()
+				pass
+			else:
+				print("Create new account")
+				self._buildAccount()
 		else:
-			self._buildAccount(textIn)
+			print("Pass everything else")
+			self._buildAccount()
 	
-	def _buildAccount(self,textIn):
+	def _buildAccount(self):
 		"""
 	Method that manages the account building process
 		"""
 		if self.account is None and self._isCustomer():
+			print("Create fresh customer")
 			customer = self.iterText('Customer')
+			print(customer)
 			self.account = OpenAccount(customer)
 
 		elif self.account is not None:
-			if self._isCustomer() and not self.account.building:
+			print(str(self._buildStatus()))
+			print(self._isCustomer())
+			if self._buildStatus() == -1 and self._isCustomer():
+				print("Replace customer with new one")	
+				customer = self.iterText('Customer')
+				print(customer)
 				self.account = OpenAccount(customer)
 
+			elif self._buildStatus() == 0 and not self._isCustomer():
+				print("Create new invoice")
+				inv = self.iterText('Invoice')
+				print(inv)
+				dte = self.iterText('IDate')
+				print(dte)
+				self.account._addInvoice(inv,dte)
+
+			elif self._buildStatus() >= 1 and not self._isCustomer():
+				print("Create new transaction")
+				typ = self.iterText('Type')
+				print(typ)
+				dte = self.iterText('TDate')
+				print(dte)
+				amt = self.iterText('Amount')
+				print(amt)
+				self.account._addTransToInvoice(typ,dte,amt)
+
+
+	def _buildStatus(self):
+		"""
+	Returns the deepest bulid level
+		"""
+		if self.account is None:
+			return -1
+		if self.account.building:
+			if len(self.account.invoices) > 0:
+				if self.account.invoices[-1].building:
+					if len(self.account.invoices[-1].transactions) > 0:
+						if self.account.invoices[-1].transactions[-1]:
+							return 2
+					return 1
+			return 0
+		return -1
 
 	def _isCustomer(self):
 		"""
@@ -72,7 +120,7 @@ class ARCreator(csv.CSVCreator):
 		"""
 		textIn = self.iterText('Customer')
 		textIn = s.removeSpaces(textIn)
-		if len(textIn) < 8:
+		if len(textIn) == 8:
 			return True
 		return False
 
@@ -80,7 +128,12 @@ class ARCreator(csv.CSVCreator):
 		"""
 	Diagnostic tool to print entry
 		"""
-		pass
+		print self.customer
+		for inv in self.account.invoices:
+			for trans in inv.transactions:
+				print inv.invoice + '\t' + inv.date + '\t' + trans.transType \
+				+ '\t' + trans.date + '\t' + str(trans.amount) + '\t' + \
+				str(inv.balance)
 
 class OpenAccount(object):
 	"""
@@ -130,7 +183,7 @@ class Invoice(object):
 		self.date = s.removeSpaces(date)
 		self.lateCode = 0
 		self.termKey = ACCT_TERM
-		self.building = self._isTerminator(invoice)
+		self.building = not self._isTerminator(invoice)
 
 	def _setLateCode(self,code):
 		"""

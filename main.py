@@ -14,7 +14,19 @@ import arReader as ar
 #fn = 'AR.txt'
 fn = 'toughCookie.txt'
 
-reader = ar.ARReader(fn)
+def main():
+	print("Open reader...")
+	reader = ar.ARReader(fn)
+	print("Creating csv...")
+	csv = ab.ARCreator()
 
-while reader.reading:
-	newLine = reader.getNextLine()
+	print("Building...")
+	while reader.reading:
+		newLine = reader.getNextLine()
+		if newLine is not None:
+			csv.writeToCSV(newLine.getText())
+
+	print("Done!")
+
+if __name__ == "__main__":
+	main()

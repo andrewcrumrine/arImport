@@ -123,7 +123,8 @@ class ARReader(f.TxtFileReader):
 			print("")
 		else:
 			if typeBool[0]:
-				print(self.buffer.getText(1))
+				#print(self.buffer.getText(1))
+				pass
 
 
 class ARBuffer(f.TxtBuffer):
