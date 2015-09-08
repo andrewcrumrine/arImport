@@ -53,7 +53,6 @@ class ARCreator(csv.CSVCreator):
 				self.account.reported = True
 				#self.printEntry()
 				self._setEntry()
-				pass
 			else:
 				print("Create new account")
 				self._buildAccount()
