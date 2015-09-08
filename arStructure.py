@@ -125,14 +125,19 @@ class InvoiceTrans(object):
 	Sets amount variable.  Sets variable to a real number
 		"""
 		amount = s.removeSpaces(amount)
-		amount = s.removeMinus(amount)
+		# amount = s.removeMinus(amount)
 		if self._isTerminator(amount):
 			self.building = False
 			return
-		if self.transType == PAYMENT or self.transType == CREDIT:
-			self.amount = -float(amount)
-		else:
+		if amount.find('-') == -1:
 			self.amount = float(amount)
+		else:
+			amount = s.removeMinus(amount)
+			self.amount = -float(amount)
+		# if self.transType == PAYMENT or self.transType == CREDIT:
+		# 	self.amount = -float(amount)
+		# else:
+		# 	self.amount = float(amount)
 
 	def _isTerminator(self,amount):
 		"""
