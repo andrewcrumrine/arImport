@@ -11,7 +11,8 @@
 import arBuilder as ab
 import arReader as ar
 
-fn = 'AR.txt'
+#fn = 'AR.txt'
+fn = 'AR_new2.txt'
 #fn = 'toughCookie.txt'
 
 def main():
