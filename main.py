@@ -29,5 +29,14 @@ def main():
 
 	print("Done!")
 
+def main2():
+	reader = ar.ARReader(fn)
+	while reader.reading:
+		nl,e = reader.getNextLine()
+		if nl is not None:
+			print(nl.getText())
+			print(e)
+
+
 if __name__ == "__main__":
 	main()

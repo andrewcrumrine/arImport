@@ -14,9 +14,13 @@ import fileReader as f
 DIAG = False
 
 #	Search keys
-HEAD_KEY = 'AMR803\n'
-CUST_KEY = '8'
-DASH_KEY = '-------\n'
+HEAD_KEY 	= 'AMR803\n'
+INV_KEY 	= ' '*3 + '_'*5
+TRAN_KEY 	= '*' + ' '*8 + '***'
+INV_TERM	= '_'*33 + '*'
+PT_KEY		= '-------\n'
+CUST_KEY 	= '8'
+CUST_TERM	= 'TOTAL'
 
 
 class ARReader(f.TxtFileReader):
@@ -24,14 +28,16 @@ class ARReader(f.TxtFileReader):
 	Extends the TxtFileReader class.  Needs to manage the different
 	trash keys and needs to pass the right lines to the builder
 	"""
-	def __init__(self,filenameIn):
+	def __init__(self,filenameIn,rptHdr = True):
 		"""
 	Initializes ARReader class
 		"""
 		f.TxtFileReader.__init__(self,filenameIn)
-		self.eventState = 0
-		self.lock = False
-		self.key = {CUST_KEY:True,DASH_KEY:False}
+		self.reportHeader = rptHdr
+		self.eventState = -1
+		self.lock = 0
+		self.key = {CUST_KEY:True,INV_KEY:True,TRAN_KEY:True,INV_TERM:True,\
+			PT_KEY:False,CUST_TERM:True}
 
 	def __del__(self):
 		"""
@@ -45,51 +51,66 @@ class ARReader(f.TxtFileReader):
 	file is empty.
 		"""
 		key = self._getKeyDict()
+
 		#	Set the buffer
-		self.buffer = ARBuffer(self.fid,key)
+		self.buffer = ARBuffer(self.fid,key,self.eventState)
 		self._setReading()
 
-		if self._isReturnLine() and not self.lock:
-			if self.eventState > 1:
-				self.eventState -= 1
-			self._printDiagnostics(DIAG,True)
-			return self.buffer
+		#	Auto return null if locked
+		if self.lock > 0:
+			self.lock -= 1
+			print('Return Lock: ' + str(self.eventState) + '\n' + \
+				'Lock: ' + str(self.lock))
+			return None,None		
+
+		#	Return null if line is header.  Set lock.
 		elif self._isHeader():
-			self.eventState = 0
-			self.lock = True
+			self.eventState = -1
+			if self.reportHeader:
+				self.lock = 6
+				self.reportHeader = False
+			else:
+				self.lock = 3
 			self._printDiagnostics(DIAG,False)
-			return None
+			self._setEventState()
+			print('Return Header: ' + str(self.eventState))
+			return None,None
+
+		#	Return null if blank.
 		elif self._isBlank():
 			self._printDiagnostics(DIAG,False)
-			return None
-		elif self._unlock():
-			self.lock = False
-			self.eventState += 1
+			print('Return Blank: ' + str(self.eventState))
+			return None,None			
+
+		#	Return buffer and event state
+		elif self._isReturnLine():
+			self._setEventState()
 			self._printDiagnostics(DIAG,True)
-			return self.buffer
+			print('Return Key: ' + str(self.eventState))
+			return self.buffer,self.eventState
+
 		else:
-			pass
+			self._setEventState()
+			return None,None
+
+
 
 	def _getKeyDict(self):
 		"""
 	Checks the event state and passes a key to the buffer
 		"""
-		if self.eventState == 0:
+		if self.eventState == -1:
 			key = CUST_KEY
-		elif self.eventState == 1:
-			key = DASH_KEY
+		elif self.eventState == 0:
+			key = INV_KEY
+		elif self.eventState == 1 or self.eventState == 2:
+			key = TRAN_KEY
+		elif self.eventState == 3:
+			key = CUST_TERM
 		pos = self.key[key]
 		keyDict = {key:pos}
 		return keyDict
 	
-	def _unlock(self):
-		"""
-	Reads the return line state and determines if the header should be unlocked.
-		"""
-		if not self._isReturnLine() and self.lock:
-			self.lock = False
-			return True
-		return False
 
 	def _isHeader(self):
 		"""
@@ -126,12 +147,18 @@ class ARReader(f.TxtFileReader):
 				#print(self.buffer.getText(1))
 				pass
 
+	def _setEventState(self):
+		"""
+	Sets event state of reader to that of buffer
+		"""
+		self.eventState = self.buffer.eventState
+
 
 class ARBuffer(f.TxtBuffer):
 	"""
 	Exteds the TxtBuffer class.
 	"""
-	def __init__(self, fid, keyIn):
+	def __init__(self, fid, keyIn, es):
 		"""
 	Inputs: open file, ordered key, and header key that appears randomly
 		"""
@@ -139,6 +166,7 @@ class ARBuffer(f.TxtBuffer):
 		self.keyDict = keyIn
 		self.headKey = {HEAD_KEY : False}
 		self.blankKey = {'\n':True}
+		self.eventState = es
 		self.header = False
 		self.blank = False
 		self.returnLine = self._checkNecessaryReturnLine()
@@ -150,20 +178,41 @@ class ARBuffer(f.TxtBuffer):
 		"""
 		if self._isHeader():
 			self.header = True
+			#self.eventState = -1
 			return False
 		if self._isBlank():
 			self.blank = True
 			return False
 
-		key,_ = self.keyDict.items()[0]
-		if key == CUST_KEY:
+		if self.eventState == -1:
 			if self._isFlagged(self.keyDict):
-				self.header = False
+				self.eventState += 1
+				return True
+
+		elif self.eventState == 0:
+			if self._isFlagged({PT_KEY:False}):
+				self.eventState = 3
 				return False
-		elif key == DASH_KEY:
+			elif self._isFlagged(self.keyDict,'_'):
+				self.eventState += 1
+				return True
+
+		elif self.eventState == 1 or self.eventState == 2:
+			if self._isFlagged(self.keyDict,'*'):
+				self.eventState = 2
+				return True
+			elif self._isFlagged({INV_TERM:True},'_'):
+				self.eventState = 0
+				return False
+
+		elif self.eventState == 3:
 			if self._isFlagged(self.keyDict):
-				return False
-		return True
+				self.eventState = -1
+				return True
+
+		else:
+			return False
+
 
 	def _isHeader(self):
 		"""
