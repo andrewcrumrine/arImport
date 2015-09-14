@@ -72,6 +72,17 @@ def wildSearch(stringIn, key, wildcard=None):
 			return index + stringLen - len(stringIn)
 		stringIn = stringIn[index + len(key):]
 
+def newWildSearch(stringIn, key, wildcard=None):
+	"""
+	Expands upon the wild search function in an effort for greater robustness.
+	"""
+	if wildcard == None:
+		return stringIn.find(key)
+
+	if key.find(wildcard) == -1:
+		return stringIn.find(key)
+
+	
 
 def removeSpaces(stringIn):
 	"""
