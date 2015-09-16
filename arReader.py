@@ -9,13 +9,14 @@
 """
 
 import fileReader as f
+import stringMan as s
 
 #	Diagnostics, True is on, False is off
 DIAG = False
 
 #	Search keys
 HEAD_KEY 	= 'AMR803\n'
-INV_KEY 	= ' '*3 + '_'*5
+INV_KEY 	= ' '*2 + '_'*6
 TRAN_KEY 	= '*' + ' '*8 + '***'
 INV_TERM	= '_'*33 + '*'
 PT_KEY		= '-------\n'
@@ -59,8 +60,8 @@ class ARReader(f.TxtFileReader):
 		#	Auto return null if locked
 		if self.lock > 0:
 			self.lock -= 1
-			print('Return Lock: ' + str(self.eventState) + '\n' + \
-				'Lock: ' + str(self.lock))
+			#print('Return Lock: ' + str(self.eventState) + '\n' + \
+			#	'Lock: ' + str(self.lock))
 			return None,None		
 
 		#	Return null if line is header.  Set lock.
@@ -73,20 +74,20 @@ class ARReader(f.TxtFileReader):
 				self.lock = 3
 			self._printDiagnostics(DIAG,False)
 			self._setEventState()
-			print('Return Header: ' + str(self.eventState))
+			#print('Return Header: ' + str(self.eventState))
 			return None,None
 
 		#	Return null if blank.
 		elif self._isBlank():
 			self._printDiagnostics(DIAG,False)
-			print('Return Blank: ' + str(self.eventState))
+			#print('Return Blank: ' + str(self.eventState))
 			return None,None			
 
 		#	Return buffer and event state
 		elif self._isReturnLine():
 			self._setEventState()
 			self._printDiagnostics(DIAG,True)
-			print('Return Key: ' + str(self.eventState))
+			#print('Return Key: ' + str(self.eventState))
 			return self.buffer,self.eventState
 
 		else:
@@ -197,13 +198,18 @@ class ARBuffer(f.TxtBuffer):
 				self.eventState += 1
 				return True
 
-		elif self.eventState == 1 or self.eventState == 2:
+		elif self.eventState == 1:
 			if self._isFlagged(self.keyDict,'*'):
 				self.eventState = 2
 				return True
-			elif self._isFlagged({INV_TERM:True},'_'):
+
+		elif self.eventState == 2:
+			if self._isFlagged({INV_TERM:True},'_'):
 				self.eventState = 0
 				return False
+			elif self._isFlagged(self.keyDict,'*'):
+				self.eventState = 2
+				return True
 
 		elif self.eventState == 3:
 			if self._isFlagged(self.keyDict):
@@ -240,3 +246,11 @@ class ARBuffer(f.TxtBuffer):
 		if self._checkReturnLine(wc):
 			return False
 		return True
+
+	def _isSpecialLine(self,key,loc,wc=None):
+		"""
+	This uses the new wildSearch technique.
+		"""
+		if s.newWildSearch(self.text,key,wc) == loc :
+			return True
+		return False

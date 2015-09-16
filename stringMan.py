@@ -82,7 +82,48 @@ def newWildSearch(stringIn, key, wildcard=None):
 	if key.find(wildcard) == -1:
 		return stringIn.find(key)
 
-	
+	#	Build locations
+	keyPos,keyStr = newWCfind(key,wildcard)
+	strPos = key.find(keyStr)
+
+	if stringIn.find(keyStr) == -1:
+		return -1
+
+	tempStr = ' '*len(key)
+	newPos = -1
+	while len(key[strPos:]) <= len(tempStr):
+		newPos = stringIn.find(keyStr,newPos + 1)
+		if newPos >= strPos:
+			tempStr = stringIn[newPos - strPos: (newPos - strPos) + len(key)]
+			for i in range(0,len(keyPos)):
+				tempStr = tempStr[:keyPos[i]] + wildcard + tempStr[keyPos[i] + len(wildcard):]
+			if tempStr == key:
+				return newPos - strPos
+
+	return -1
+
+
+
+def newWCfind(key,wc):
+	"""
+	Update to wcFind
+	"""
+	keyPos = []
+	keyPosLoc = 0
+	maxDist = 0
+	keyStr = ''
+	for i in range(0,key.count(wc)):
+		kPNew = key.find(wc,keyPosLoc)
+		if kPNew - keyPosLoc > maxDist:
+			keyStr = key[keyPosLoc:kPNew]
+			maxDist = kPNew - keyPosLoc
+		keyPos.append(kPNew)
+		keyPosLoc = kPNew + 1
+
+	if len(key[keyPos[-1]:]) > keyStr:
+		keyStr = key[keyPos[-1] + 1:]
+
+	return keyPos,keyStr
 
 def removeSpaces(stringIn):
 	"""

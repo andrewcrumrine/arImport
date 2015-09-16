@@ -41,61 +41,84 @@ class ARCreator(csv.CSVCreator):
 		if self.fid is not None:
 			self.fid.close()
 
-	def writeToCSV(self,textIn):
+	def writeToCSV(self,textIn,eventState):
 		"""
 	Accepts incoming string and manages writing to csv
 		"""
-		print("--NEW LINE---")
+		#print("--NEW LINE---")
 		self._setText(textIn)
-		if self.account is not None:
-			if self._buildStatus() == -1 and not self.account.reported:
-				print("Print entry")
-				self.account.reported = True
-				#self.printEntry()
-				self._setEntry()
-			else:
-				print("Create new account")
-				self._buildAccount()
+		if self.account is not None and eventState == -1 \
+			and not self.account.reported:
+			self.account.reported = True
+		#	True input means only write invoices
+			self._setEntry()
 		else:
-			print("Pass everything else")
-			self._buildAccount()
+			self._buildAccount(eventState)
+
+		# if self.account is not None:
+		# 	if self._buildStatus() == -1 and not self.account.reported:
+		# 		print("Print entry")
+		# 		self.account.reported = True
+		# 		#self.printEntry()
+		# 		self._setEntry()
+		# 	else:
+		# 		print("Create new account")
+		# 		self._buildAccount()
+		# else:
+		# 	print("Pass everything else")
+		# 	self._buildAccount()
 	
-	def _buildAccount(self):
+	def _buildAccount(self,eventState):
 		"""
 	Method that manages the account building process
 		"""
-		if self.account is None and self._isCustomer():
-			print("Create fresh customer")
+		if eventState == 0:
 			customer = self.iterText('Customer')
-			print(customer)
 			self.account = aS.OpenAccount(customer)
 
-		elif self.account is not None:
-			print(str(self._buildStatus()))
-			print(self._isCustomer())
-			if self._buildStatus() == -1 and self._isCustomer():
-				print("Replace customer with new one")	
-				customer = self.iterText('Customer')
-				print(customer)
-				self.account = aS.OpenAccount(customer)
+		elif eventState == 1:
+			inv = self.iterText('Invoice')
+			dte = self.iterText('IDate')
+			self.account._addInvoice(inv,dte)
 
-			elif self._buildStatus() == 0 and not self._isCustomer():
-				print("Create new invoice")
-				inv = self.iterText('Invoice')
-				print(inv)
-				dte = self.iterText('IDate')
-				print(dte)
-				self.account._addInvoice(inv,dte)
+		elif eventState == 2:
+			typ = self.iterText('Type')
+			dte = self.iterText('TDate')
+			amt = self.iterText('Amount')
+			self.account._addTransToInvoice(typ,dte,amt)
 
-			elif self._buildStatus() >= 1 and not self._isCustomer():
-				print("Create new transaction")
-				typ = self.iterText('Type')
-				print(typ)
-				dte = self.iterText('TDate')
-				print(dte)
-				amt = self.iterText('Amount')
-				print(amt)
-				self.account._addTransToInvoice(typ,dte,amt)
+		# if self.account is None and self._isCustomer():
+		# 	print("Create fresh customer")
+		# 	customer = self.iterText('Customer')
+		# 	print(customer)
+		# 	self.account = aS.OpenAccount(customer)
+
+		# elif self.account is not None:
+		# 	print(str(self._buildStatus()))
+		# 	print(self._isCustomer())
+		# 	if self._buildStatus() == -1 and self._isCustomer():
+		# 		print("Replace customer with new one")	
+		# 		customer = self.iterText('Customer')
+		# 		print(customer)
+		# 		self.account = aS.OpenAccount(customer)
+
+		# 	elif self._buildStatus() == 0 and not self._isCustomer():
+		# 		print("Create new invoice")
+		# 		inv = self.iterText('Invoice')
+		# 		print(inv)
+		# 		dte = self.iterText('IDate')
+		# 		print(dte)
+		# 		self.account._addInvoice(inv,dte)
+
+		# 	elif self._buildStatus() >= 1 and not self._isCustomer():
+		# 		print("Create new transaction")
+		# 		typ = self.iterText('Type')
+		# 		print(typ)
+		# 		dte = self.iterText('TDate')
+		# 		print(dte)
+		# 		amt = self.iterText('Amount')
+		# 		print(amt)
+		# 		self.account._addTransToInvoice(typ,dte,amt)
 
 
 	def _buildStatus(self):
@@ -137,16 +160,27 @@ class ARCreator(csv.CSVCreator):
 				+ '\t' + trans.date + '\t' + str(trans.amount) + '\t' + \
 				str(inv.balance)
 
-	def _setEntry(self):
+	def _setEntry(self,invOnly = False):
 		"""
 	Sets the entry of the entire account built from the arStructure module.
 		"""
 		for inv in self.account.invoices:
 			for trans in inv.transactions:
-				self._setField(self.account.customer); self._nextField()
-				self._setField(inv.invoice); self._nextField()
-				self._setField(inv.date); self._nextField()
-				self._setField(trans.transType); self._nextField()
-				self._setField(trans.date); self._nextField()
-				self._setField(str(round(trans.amount,2))); self._nextField()
-				self._setField(str(round(inv.balance,2))); self._nextEntry()
+				if invOnly:
+					if trans.transType == "INV" and abs(inv.balance) > 5:
+						self._setField(self.account.customer); self._nextField()
+						self._setField(inv.invoice); self._nextField()
+						self._setField(inv.date); self._nextField()
+						self._setField(trans.transType); self._nextField()
+						self._setField(trans.date); self._nextField()
+						self._setField(str(round(trans.amount,2))); self._nextField()
+						self._setField(str(round(inv.balance,2))); self._nextEntry()
+
+				else:
+					self._setField(self.account.customer); self._nextField()
+					self._setField(inv.invoice); self._nextField()
+					self._setField(inv.date); self._nextField()
+					self._setField(trans.transType); self._nextField()
+					self._setField(trans.date); self._nextField()
+					self._setField(str(round(trans.amount,2))); self._nextField()
+					self._setField(str(round(inv.balance,2))); self._nextEntry()

@@ -11,9 +11,7 @@
 import arBuilder as ab
 import arReader as ar
 
-#fn = 'AR.txt'
-fn = 'AR_new2.txt'
-#fn = 'toughCookie.txt'
+fn = 'AR.txt'
 
 def main():
 	print("Open reader...")
@@ -23,9 +21,9 @@ def main():
 
 	print("Building...")
 	while reader.reading:
-		newLine = reader.getNextLine()
+		newLine,eventState = reader.getNextLine()
 		if newLine is not None:
-			csv.writeToCSV(newLine.getText())
+			csv.writeToCSV(newLine.getText(),eventState)
 
 	print("Done!")
 
