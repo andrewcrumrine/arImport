@@ -1,0 +1,47 @@
+Number of Possible lines:
+
+1) Report Header ending with "AMR803\n"
+	0) Look for HEAD_KEY always
+	a) Lasts 7 lines
+	b) Appears once
+	c) Set lock count to 7
+	d) Set event state to -1
+2) Page Header ending with "AMR803\n"
+	0) Look for HEAD_KEY always
+	a) Lasts 4 lines
+	b) Appears without warning
+	c) Set lock count to 4
+	d) Set event state to -1
+3) Customer Reference #
+	0) Look for CUST_KEY on event state -1
+	a) Appears after a Page Header or after a Customer Termination line
+	b) Single line
+	c) Set event state to 0
+4) Invoice Reference #
+	0) Look for INV_KEY on event state 0
+	a) Appears after Customer # or Invoice Termination line
+	b) Single line
+	c) Set event state to 1
+5) Transaction Reference #
+	0) Look for TRAN_KEY on event state 1 and 2
+	a) Appears after Invoice # or Transaction #
+	b) Varying line
+	c) Set event state to 2
+6) Invoice Terminating Line
+	0) Look for INV_TERM on event state 2
+	a) Always appears after Transaction #
+	b) Single line
+	c) Set event state to 0
+7) Pre-Total Line
+	0) Look for PT_KEY on event state 0
+	a) Always appears after Invoice Termination Line
+	b) Single line
+	c) Set event state to 3
+8) Customer Termination Line
+	0) Look for CUST_TERM on event state 3
+	a) Always appears after Pre-Total Line
+	b) Three lines
+	c) Set event state to -1
+9) Blank Line
+	0) Look for BLANK always
+	a) Appears without warning

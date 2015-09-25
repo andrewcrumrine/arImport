@@ -14,6 +14,7 @@ import stringMan as s
 import arStructure as aS
 
 CUST_KEY 	= '8'
+INV_ONLY	= True
 
 class ARCreator(csv.CSVCreator):
 	"""
@@ -33,6 +34,8 @@ class ARCreator(csv.CSVCreator):
 		}
 		self._createCSV()
 		self._createHeader()
+		self.invFid = None
+		self.inv_fn = 'invoiceMap.txt'
 
 	def __del__(self):
 		"""
@@ -40,6 +43,8 @@ class ARCreator(csv.CSVCreator):
 		"""
 		if self.fid is not None:
 			self.fid.close()
+		if self.invFid is not None:
+			self.invFid.close()
 
 	def writeToCSV(self,textIn,eventState):
 		"""
@@ -51,7 +56,7 @@ class ARCreator(csv.CSVCreator):
 			and not self.account.reported:
 			self.account.reported = True
 		#	True input means only write invoices
-			self._setEntry()
+			self._setEntry(INV_ONLY)
 		else:
 			self._buildAccount(eventState)
 
@@ -160,10 +165,23 @@ class ARCreator(csv.CSVCreator):
 				+ '\t' + trans.date + '\t' + str(trans.amount) + '\t' + \
 				str(inv.balance)
 
+	def _setInvoiceMap(self,inv):
+		"""
+	Method writes to the text file used to create the invoice map
+		"""
+		if self.invFid is not None:
+			self.invFid.write(inv.invoice)
+			self.invFid.write('\t')
+			self.invFid.write('True')
+			self.invFid.write('\n')
+
 	def _setEntry(self,invOnly = False):
 		"""
 	Sets the entry of the entire account built from the arStructure module.
 		"""
+		if invOnly and self.invFid is None:
+			self.invFid = open(self.inv_fn,'w')
+
 		for inv in self.account.invoices:
 			for trans in inv.transactions:
 				if invOnly:
@@ -175,6 +193,7 @@ class ARCreator(csv.CSVCreator):
 						self._setField(trans.date); self._nextField()
 						self._setField(str(round(trans.amount,2))); self._nextField()
 						self._setField(str(round(inv.balance,2))); self._nextEntry()
+						self._setInvoiceMap(inv)
 
 				else:
 					self._setField(self.account.customer); self._nextField()

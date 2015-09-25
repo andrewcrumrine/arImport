@@ -1,0 +1,132 @@
+ Company number . . . :    1  NORPAK CORP.
+ Customer number  . . :   80530000  BORAX PAPER PRODUCTS, INC
+    Order number  . . :   CO   74137  Request date  . :    9/16/15   Mfg date  . :    9/16/15   PO No.  . :   132934-BK
+ Request  Mfg due  Promise  WH  WH      Item number/      Mfg           Open       UM       Value at cost           CB  RC
+ date     date     date     no  loc          Description  order         quantity
+  9/16/15  9/16/15  9/16/15 N           G11730 BORAX                      52.000   CS            2,366.00000000
+                                             15X20"BLKFT"ACME"50#/CS
+                                                                                           Value at cost         Value at sales
+       ***  1 - CO   74137 Order totals ***                                                    2,366.000               4,189.64
+    Order number  . . :   CO   74138  Request date  . :    9/01/15   Mfg date  . :    9/01/15   PO No.  . :   132935-bk
+ Request  Mfg due  Promise  WH  WH      Item number/      Mfg           Open       UM       Value at cost           CB  RC
+ date     date     date     no  loc          Description  order         quantity
+  9/01/15  9/01/15  9/01/15 N           F1212DEL                           5.000   CS              172.80000000  *
+                                             12X12" DELWRAP
+  9/01/15  9/01/15  9/01/15 N           F15DEL                             1.000   RL               12.72000000  *
+                                             15" DELWRAP
+                                                                                           Value at cost         Value at sales
+       ***  1 - CO   74138 Order totals ***                                                      185.520                 289.83
+    Order number  . . :   CO   74168  Request date  . :    9/21/15   Mfg date  . :    9/21/15   PO No.  . :   133109-BK
+ Request  Mfg due  Promise  WH  WH      Item number/      Mfg           Open       UM       Value at cost           CB  RC
+ date     date     date     no  loc          Description  order         quantity
+  9/21/15  9/21/15  9/21/15 N           G11735 BORAX                      50.000   CS            2,275.00000000
+                                             15X20"40#BLKFT"BROOKLYN'S BEST
+                                                                                           Value at cost         Value at sales
+       ***  1 - CO   74168 Order totals ***                                                    2,275.000               4,028.50
+    Order number  . . :   CO   74231  Request date  . :    9/11/15   Mfg date  . :    9/11/15   PO No.  . :   133310-BK
+ Request  Mfg due  Promise  WH  WH      Item number/      Mfg           Open       UM       Value at cost           CB  RC
+ date     date     date     no  loc          Description  order         quantity
+  9/11/15  9/11/15  9/11/15 N           F25Q1MPLAIN                        3.000   CS               64.62000000  *
+                                             25# QUILON LINER PLAIN GRN 1M
+                                                                                           Value at cost         Value at sales
+       ***  1 - CO   74231 Order totals ***                                                       64.620                  91.44
+    Order number  . . :   CO   74312  Request date  . :    9/18/15   Mfg date  . :    9/18/15   PO No.  . :   133543-BK
+ Request  Mfg due  Promise  WH  WH      Item number/      Mfg           Open       UM       Value at cost           CB  RC
+ date     date     date     no  loc          Description  order         quantity
+  9/18/15  9/18/15  9/18/15 N           F18DEL                             5.000   RL               76.20000000
+                                             18" DELWRAP
+  9/18/15  9/18/15  9/18/15 N           G11739 BORAX                     156.000   RL              733.20000000
+                                             15"W MG
+ AMBD5PFR   QSECOFR                             Open Orders/Back Orders by Customer                            9/16/15     Page    4
+                                                                                                              15:41:26  S109751F  MM
+ Company number . . . :    1  NORPAK CORP.
+ Customer number  . . :   80530000  BORAX PAPER PRODUCTS, INC
+    Order number  . . :   CO   74312  Request date  . :    9/18/15   Mfg date  . :    9/18/15   PO No.  . :   133543-BK
+ Request  Mfg due  Promise  WH  WH      Item number/      Mfg           Open       UM       Value at cost           CB  RC
+ date     date     date     no  loc          Description  order         quantity
+  9/18/15  9/18/15  9/18/15 N           F15MP                             10.000   RL              148.20000000
+                                             15" MEAT PAK
+  9/18/15  9/18/15  9/18/15 N           F18MP                             10.000   RL              177.60000000
+                                             18" MEAT PAK
+  9/18/15  9/18/15  9/18/15 N           F1212DEL                          10.000   CS              345.60000000
+                                             12X12" DELWRAP
+  9/18/15  9/18/15  9/18/15 N           F15DEL                            10.000   RL              127.20000000
+                                             15" DELWRAP
+                                                                                           Value at cost         Value at sales
+       ***  1 - CO   74312 Order totals ***                                                    1,608.000               3,130.45
+    Order number  . . :   CO   74313  Request date  . :    9/17/15   Mfg date  . :    9/17/15   PO No.  . :   133544-BK
+ Request  Mfg due  Promise  WH  WH      Item number/      Mfg           Open       UM       Value at cost           CB  RC
+ date     date     date     no  loc          Description  order         quantity
+  9/17/15  9/17/15  9/17/15 N           G11735 BORAX                      10.000   CS              455.00000000
+                                             15X20"40#BLKFT"BROOKLYN'S BEST
+                                                                                           Value at cost         Value at sales
+       ***  1 - CO   74313 Order totals ***                                                      455.000                 805.70
+       ***     80530000 Customer totals ***                                                    6,954.140              12,535.56
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ 9/16/15                     Detail                                                          Norpak Corp.              Period Selected:  9/01/2015                       Page    3          SRR0720CSD
+ 7:54:20                                                                               Sales Report by Customer                          9/30/2015
+Customer                                     <---------------- Item ----------------->         <-- Invoice ->                           <-------- Cost --------> <------- Price -------->  Gross
+ Number  Sls#        Customer Name       Wh.     Number             Description        Order # Number   Date                Quantity     Per Unit    Extension    Per Unit    Extension    Profit
+-------- ----- ------------------------- --- --------------- ------------------------- ------- ------ --------            ------------- ---------- ------------- ---------- ------------- ---------
+80530000    15 BORAX PAPER PRODUCTS, INC N   F12MG900        12"W MG                     74138  76476  9/14/15                      15      5.090         76.35      6.680        100.20    23.80
+                                                                                         74231  76548  9/14/15                      10      5.090         50.90      6.680         66.80    23.80
+                                                                                                     ** Item Total **               25                   127.25                   167.00    23.80  *
+                                             F1212DEL        12X12" DELWRAP              74231  76548  9/14/15                       5     36.270        181.35     51.760        258.80    29.92
+                                                                                                     ** Item Total **                5                   181.35                   258.80    29.92  *
+                                             F1520TWB        15 X 20" WHITE BUTCHER      74138  76476  9/14/15                       3     32.170         96.51     45.000        135.00    28.51
+                                                                                         74231  76548  9/14/15                       5     32.170        160.85     45.000        225.00    28.51
+                                                                                                     ** Item Total **                8                   257.36                   360.00    28.51  *
+                                             F15DEL          15" DELWRAP                 74138  76476  9/14/15                       9     12.920        116.28     31.030        279.27    58.36
+                                                                                         74231  76548  9/14/15                      10     12.920        129.20     31.030        310.30    58.36
+                                                                                                     ** Item Total **               19                   245.48                   589.57    58.36  *
+                                             F15MP           15" MEAT PAK                74138  76476  9/14/15                      10     11.660        116.60     38.460        384.60    69.68
+                                                                                                     ** Item Total **               10                   116.60                   384.60    69.68  *
+                                             G11739 BORAX    15"W MG                     74138  76476  9/14/15                     156      5.230        815.88      8.200      1,279.20    36.21
+                                                                                         74231  76548  9/14/15                      78      5.230        407.94      8.200        639.60    36.21
+                                                                                                     ** Item Total **              234                 1,223.82                 1,918.80    36.21  *
+                                             F18MP           18" MEAT PAK                74138  76476  9/14/15                      20     13.970        279.40     43.850        877.00    68.14
+                                                                                                     ** Item Total **               20                   279.40                   877.00    68.14  *
+                                             G11740 BORAX    18"W MG                     74138  76476  9/14/15                      78      6.250        487.50      9.830        766.74    36.41
+                                                                                                     ** Item Total **               78                   487.50                   766.74    36.41  *
+                                             F24DEL          24" DELWRAP                 74231  76548  9/14/15                       4     20.450         81.80     56.710        226.84    63.93
+                                                                                                     ** Item Total **                4                    81.80                   226.84    63.93  *
+                                             F25Q1MPLAIN     25# QUILON LINER PLAIN GR   74231  76548  9/14/15                       5     21.150        105.75     30.480        152.40    30.61
+                                                                                                     ** Item Total **                5                   105.75                   152.40    30.61  *
+                                                                                                     ** Customer Total **          408                 3,106.31                 5,701.75    45.52  **
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+80530000 BORAX PAPER PRODUCTS, INC  SALESREP    15  PHONE 718-665-8500
+   76399    0   8/21/15   8/21/15
+         INV      76399   8/21/15         1461.35
+    P.O. 132727-BK               *                        1461.35
+   76476    0   9/01/15   9/01/15
+         INV      76476   9/01/15         3822.01
+    P.O. 132935-bk               *                        3822.01
+   76548    0   9/11/15   9/11/15
+         INV      76548   9/11/15         1879.74
+    P.O. 133310-BK               *                        1879.74
+                                 ---------------------------------------------------------------------------------------------------
+TOTAL AMOUNT DUE -                       7,163.10                             .00                            .00
+                                                         7,163.10                             .00                             .00
+------------------------------------------------------------------------------------------------------------------------------------
+
+
